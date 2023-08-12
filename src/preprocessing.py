@@ -4,20 +4,23 @@ import os
 from matplotlib import pyplot as plt
 import numpy as np
 
-def binarize(image: ndarray) -> ndarray:
+def binarize_image(image: ndarray) -> ndarray:
     blurred_image = cv.GaussianBlur(image, (5, 5), 0)
     _, binary_image = cv.threshold(blurred_image, 0, 255, cv.THRESH_BINARY_INV + cv.THRESH_OTSU)
     kernel = cv.getStructuringElement(cv.MORPH_ELLIPSE, (7, 7))
     opening = cv.morphologyEx(binary_image, cv.MORPH_OPEN, kernel)
     inverted_image = 255 - binary_image
 
+    return inverted_image
+
+def erode_image(image: ndarray) -> ndarray:
     kernel1 = np.array([
         [1, 1, 1],
         [1, 1, 1],
         [1, 1, 1]
     ], np.uint8)
 
-    eroded_image = cv.erode(inverted_image, kernel1, iterations=1)
+    eroded_image = cv.erode(image, kernel1, iterations=1)
 
     kernel2 = np.array([
         [0, 1, 0],
@@ -43,7 +46,8 @@ os.makedirs(processed_images_path, exist_ok=True)
 for image_path in image_paths:
     image = cv.imread(image_path, cv.IMREAD_GRAYSCALE)
     if image is not None:
-        processed_image = binarize(image)
+        binarized_image = binarize_image(image)
+        eroded_image = erode_image(binarized_image)
         processed_image_filename = os.path.basename(image_path)
         processed_image_path = os.path.join(processed_images_path, processed_image_filename)
-        cv.imwrite(processed_image_path, processed_image)
+        cv.imwrite(processed_image_path, eroded_image)
