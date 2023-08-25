@@ -3,51 +3,55 @@ import cv2 as cv
 import os
 from matplotlib import pyplot as plt
 import numpy as np
+from pathlib import Path
+from tqdm import tqdm
+from utils import get_image_paths
+
 
 def binarize_image(image: ndarray) -> ndarray:
     blurred_image = cv.GaussianBlur(image, (5, 5), 0)
-    _, binary_image = cv.threshold(blurred_image, 0, 255, cv.THRESH_BINARY_INV + cv.THRESH_OTSU)
+    _, binary_image = cv.threshold(
+        blurred_image, 0, 255, cv.THRESH_BINARY_INV + cv.THRESH_OTSU
+    )
     kernel = cv.getStructuringElement(cv.MORPH_ELLIPSE, (7, 7))
     opening = cv.morphologyEx(binary_image, cv.MORPH_OPEN, kernel)
     inverted_image = 255 - binary_image
 
     return inverted_image
 
+
 def erode_image(image: ndarray) -> ndarray:
-    kernel1 = np.array([
-        [1, 1, 1],
-        [1, 1, 1],
-        [1, 1, 1]
-    ], np.uint8)
+    kernel1 = np.array([[1, 1, 1], [1, 1, 1], [1, 1, 1]], np.uint8)
 
     eroded_image = cv.erode(image, kernel1, iterations=1)
 
-    kernel2 = np.array([
-        [0, 1, 0],
-        [1, 1, 1],
-        [0, 1, 0]
-    ], np.uint8)
+    kernel2 = np.array([[0, 1, 0], [1, 1, 1], [0, 1, 0]], np.uint8)
 
     eroded_image = cv.erode(eroded_image, kernel2, iterations=5)
 
     return eroded_image
 
-original_images_path = './data/original_images'
-processed_images_path = './data/processed_images'
 
-image_paths = []
+class Preprocessor:
+    def __call__(self, source: Path, target: Path) -> list[Path]:
+        image_paths: list[Path] = self._get_image_paths(source)
+        os.makedirs(target, exist_ok=True)
+        target_image_paths = self._preprocess(image_paths, target)
+        return target_image_paths
 
-for filename in os.listdir(original_images_path):
-    if filename.endswith('.tif'):
-        image_paths.append(os.path.join(original_images_path, filename))
+    def _preprocess(self, image_paths: list[Path], target: Path) -> list[Path]:
+        target_image_paths = []
+        for image_path in tqdm(image_paths, desc="Preprocessing", unit="iteration"):
+            image = cv.imread(str(image_path), cv.IMREAD_GRAYSCALE)
+            if image is not None:
+                continue
+            binarized_image = binarize_image(image)
+            eroded_image = erode_image(binarized_image)
+            processed_image_filename = os.path.basename(image_path)
+            processed_image_path = os.path.join(target, processed_image_filename)
+            target_image_paths.append(processed_image_path)
+            cv.imwrite(processed_image_path, eroded_image)
+        return target_image_paths
 
-os.makedirs(processed_images_path, exist_ok=True)
-
-for image_path in image_paths:
-    image = cv.imread(image_path, cv.IMREAD_GRAYSCALE)
-    if image is not None:
-        binarized_image = binarize_image(image)
-        eroded_image = erode_image(binarized_image)
-        processed_image_filename = os.path.basename(image_path)
-        processed_image_path = os.path.join(processed_images_path, processed_image_filename)
-        cv.imwrite(processed_image_path, eroded_image)
+    def _get_image_paths(self, source: Path) -> list[Path]:
+        return get_image_paths(source)

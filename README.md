@@ -10,13 +10,22 @@ Sistema de processamento de imagens para contagem de cromossomos.
 # Instalação
 
 ```
-conda create --name chromosome --file requirements.txt
+pip install -r requirements.txt
 ```
 
 # Uso
 
+## Preprocessing images
+```
+python src/counter.py preprocess --source=./data/ori
+ginal_images --target=./data/preprocessed
+```
+
+## Apply segmentation to a set of images
+
+
 # References
-- [Image Thresholding](https://docs.opencv.org/4.x/d7/d4d/tutorial_py_thresholding.html)
+- [OpenCV: Image Thresholding](https://docs.opencv.org/4.x/d7/d4d/tutorial_py_thresholding.html)
 - [K-means image segmentation using OpenCV - medium](https://medium.com/towardssingularity/k-means-clustering-for-image-segmentation-using-opencv-in-python-17178ce3d6f3)
 - [K-means image segmentation using OpenCV - kdnuggets](https://www.kdnuggets.com/2019/08/introduction-image-segmentation-k-means-clustering.html)
 - [Image segmentation with Mean-Shift](https://stackoverflow.com/questions/62575894/how-to-find-clusters-in-image-using-mean-shift-in-python-opencv)
