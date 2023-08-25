@@ -28,7 +28,7 @@ Opções de algoritmo de segmentação:
 - **Fuzzy C-Means:** fuzzy
 
 ```
-python counter/cli.py segment --source_dir=./data/original_images --target_dir=./data/segmented_images/kmeans --method=kmeans
+python counter/cli.py preprocess --source_dir=./data/original_images --target_dir=./data/preprocessed
 ```
 
 ## Validate results

@@ -15,7 +15,7 @@ def binarize_image(image: ndarray) -> ndarray:
     )
     kernel = cv.getStructuringElement(cv.MORPH_ELLIPSE, (7, 7))
     opening = cv.morphologyEx(binary_image, cv.MORPH_OPEN, kernel)
-    # binary_image = cv.cvtColor(opening, cv.COLOR_GRAY2BGR)
+    binary_image = cv.cvtColor(opening, cv.COLOR_GRAY2BGR)
     # inverted_image = 255 - binary_image
     return binary_image
 
@@ -42,11 +42,11 @@ class Preprocessor:
             if image is None:
                 continue
             binary_image = binarize_image(image)
-            # eroded_image = erode_image(binary_image)
+            eroded_image = erode_image(binary_image)
             processed_image_filename = os.path.basename(image_path)
             processed_image_path = os.path.join(target, processed_image_filename)
             target_image_paths.append(processed_image_path)
-            cv.imwrite(processed_image_path, binary_image)
+            cv.imwrite(processed_image_path, eroded_image)
         return target_image_paths
 
     def _get_image_paths(self, source: Path) -> list[Path]:
