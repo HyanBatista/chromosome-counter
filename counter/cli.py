@@ -1,6 +1,7 @@
 from pathlib import Path
 
 import click
+import pandas as pd
 from counters import ConnectedComponentsCounter
 from preprocessing import Preprocessor
 from segmentation import (
@@ -8,6 +9,7 @@ from segmentation import (
     KMeansImageSegmenter,
     MeanShiftImageSegmenter,
 )
+from validation import SimpleCounterValidator
 
 
 @click.group()
@@ -62,9 +64,42 @@ def count(source_dir: Path, output_file: Path):
     counter(source_dir, output_file)
 
 
+@click.command()
+@click.option(
+    "--annotations", prompt="Annotations file", help="Path for the annotations file."
+)
+@click.option(
+    "--counts",
+    prompt="Count file",
+    help="File holding the count of chromosomes for each image.",
+)
+@click.option(
+    "--output_file",
+    prompt="Output file path.",
+    help="Output file path for the validation data.",
+)
+def validate(annotations: Path, counts: Path, output_file: Path):
+    validator = SimpleCounterValidator()
+    mse = validator(annotations, counts, output_file)
+    print(f"[INFO] {mse}")
+
+
+@click.command()
+@click.option(
+    "--path",
+    prompt="Validation data path.",
+    help="Preview some of the validation data.",
+)
+def show(path: Path):
+    validation_data = pd.read_parquet(path)
+    print(validation_data.head())
+
+
 cli.add_command(preprocess)
 cli.add_command(segment)
 cli.add_command(count)
+cli.add_command(validate)
+cli.add_command(show)
 
 
 if __name__ == "__main__":

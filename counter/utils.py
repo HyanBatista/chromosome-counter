@@ -1,3 +1,4 @@
+import json
 import os
 from pathlib import Path
 
@@ -16,3 +17,9 @@ def get_image_paths(source: Path) -> list[Path]:
 def write_images(path_image_dicts: list[dict[np.ndarray, Path]]):
     for path_image_dict in path_image_dicts:
         cv.imwrite(path_image_dict["path"], path_image_dict["image"])
+
+
+def read_json(path: Path) -> dict:
+    with open(path, "r") as f:
+        data = json.load(f)
+    return data

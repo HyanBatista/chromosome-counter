@@ -14,27 +14,27 @@ class BaseCounter(ABC):
     ) -> dict[str, int]:
         image_paths: list[Path] = self._get_image_paths(source_dir)
         os.makedirs(os.path.dirname(output_file), exist_ok=True)
-        path_count_dict = self._count_from_images(image_paths)
+        image_count_dict = self._count_from_images(image_paths)
         if save:
-            self._save_result(path_count_dict, output_file)
-        return path_count_dict
+            self._save_result(image_count_dict, output_file)
+        return image_count_dict
 
     def _count_from_images(self, image_paths: list[Path]) -> dict[str, int]:
-        path_count_dict = {}
+        image_count_dict = {}
         for image_path in tqdm(image_paths):
             if image_path is None:
                 continue
             count = self._count_from_image(image_path)
-            path_count_dict[str(image_path)] = count
-        return path_count_dict
+            image_count_dict[str(image_path.name)] = count
+        return image_count_dict
 
     @abstractmethod
     def _count_from_image(self, image_path: Path) -> int:
         pass
 
-    def _save_result(self, path_count_dict: dict[str, int], output_file: Path):
+    def _save_result(self, image_count_dict: dict[str, int], output_file: Path):
         with open(output_file, "w") as json_file:
-            json.dump(path_count_dict, json_file, indent=4)
+            json.dump(image_count_dict, json_file, indent=4)
 
     def _get_image_paths(self, source_dir: Path) -> list[Path]:
         return get_image_paths(source_dir)

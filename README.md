@@ -31,6 +31,21 @@ Opções de algoritmo de segmentação:
 python counter/cli.py segment --source_dir=./data/original_images --target_dir=./data/segmented_images/kmeans --method=kmeans
 ```
 
+## Validate results
+```
+python counter/cli.py validate --annotations=./data/annotations.parquet --counts=./data/count_result.json --output_file=./data/validation_data.parquet
+```
+
+## Preview some of the validation data
+```
+python counter/cli.py show --path=./data/validation_data.parquet
+```
+
+## Count the chromosomes
+```
+python counter/cli.py count --source_dir=./data/processed_images --output_file=./data/count_result.json
+```
+
 # References
 - [OpenCV: Image Thresholding](https://docs.opencv.org/4.x/d7/d4d/tutorial_py_thresholding.html)
 - [K-means image segmentation using OpenCV - medium](https://medium.com/towardssingularity/k-means-clustering-for-image-segmentation-using-opencv-in-python-17178ce3d6f3)
