@@ -1,8 +1,7 @@
-from numpy import ndarray
 import cv2 as cv
 import os
-from matplotlib import pyplot as plt
 import numpy as np
+from numpy import ndarray
 from pathlib import Path
 from tqdm import tqdm
 from utils import get_image_paths
@@ -15,6 +14,7 @@ def binarize_image(image: ndarray) -> ndarray:
     )
     kernel = cv.getStructuringElement(cv.MORPH_ELLIPSE, (7, 7))
     opening = cv.morphologyEx(binary_image, cv.MORPH_OPEN, kernel)
+    binary_image = cv.cvtColor(opening, cv.COLOR_GRAY2BGR)
     inverted_image = 255 - binary_image
     return inverted_image
 
@@ -38,7 +38,7 @@ class Preprocessor:
         target_image_paths = []
         for image_path in tqdm(image_paths, desc="Preprocessing", unit="iteration"):
             image = cv.imread(str(image_path), cv.IMREAD_GRAYSCALE)
-            if image is not None:
+            if image is None:
                 continue
             binarized_image = binarize_image(image)
             eroded_image = erode_image(binarized_image)

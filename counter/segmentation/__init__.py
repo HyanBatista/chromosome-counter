@@ -8,7 +8,7 @@ from utils import get_image_paths, write_images
 from segmentation.fcm import FCM
 
 
-class ImageSegmenter(ABC):
+class BaseImageSegmenter(ABC):
     def __call__(self, source_dir: Path, target_dir: Path) -> list[Path]:
         image_paths: list[Path] = self._get_image_paths(source_dir)
         os.makedirs(target_dir, exist_ok=True)
@@ -34,7 +34,7 @@ class ImageSegmenter(ABC):
         return get_image_paths(source_dir)
 
 
-class KMeansImageSegmenter(ImageSegmenter):
+class KMeansImageSegmenter(BaseImageSegmenter):
     def __init__(self, k=2):
         self.k = k
 
@@ -52,7 +52,7 @@ class KMeansImageSegmenter(ImageSegmenter):
         return segmented_image
 
 
-class MeanShiftSegmenter(ImageSegmenter):
+class MeanShiftImageSegmenter(BaseImageSegmenter):
     def __init__(self, sp=30, sr=20):
         self.sp = sp
         self.sr = sr
@@ -63,7 +63,7 @@ class MeanShiftSegmenter(ImageSegmenter):
         return shifted_image
 
 
-class FuzzyCMeansSegmenter(ImageSegmenter):
+class FuzzyCMeansImageSegmenter(BaseImageSegmenter):
     def __init__(self, n_cluster=2, m=2, epsilon=2, max_iter=100):
         self.n_cluster = n_cluster
         self.m = m
