@@ -16,19 +16,14 @@ def binarize_image(image: ndarray) -> ndarray:
     kernel = cv.getStructuringElement(cv.MORPH_ELLIPSE, (7, 7))
     opening = cv.morphologyEx(binary_image, cv.MORPH_OPEN, kernel)
     inverted_image = 255 - binary_image
-
     return inverted_image
 
 
 def erode_image(image: ndarray) -> ndarray:
     kernel1 = np.array([[1, 1, 1], [1, 1, 1], [1, 1, 1]], np.uint8)
-
     eroded_image = cv.erode(image, kernel1, iterations=1)
-
     kernel2 = np.array([[0, 1, 0], [1, 1, 1], [0, 1, 0]], np.uint8)
-
     eroded_image = cv.erode(eroded_image, kernel2, iterations=5)
-
     return eroded_image
 
 
