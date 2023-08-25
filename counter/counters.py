@@ -1,9 +1,9 @@
-import cv2 as cv
-import os
 import json
+import os
 from abc import ABC, abstractmethod
 from pathlib import Path
-from typing import Any
+
+import cv2 as cv
 from tqdm import tqdm
 from utils import get_image_paths
 
@@ -43,9 +43,7 @@ class BaseCounter(ABC):
 class ConnectedComponentsCounter(BaseCounter):
     def _count_from_image(self, image_path: Path) -> int:
         binary_image = cv.imread(str(image_path), cv.IMREAD_GRAYSCALE)
-        (num_labels, _, stats, _) = cv.connectedComponentsWithStats(
-            binary_image, -1, 8
-        )
+        (num_labels, _, stats, _) = cv.connectedComponentsWithStats(binary_image, -1, 8)
         chromosome_count = 0
         for label in range(num_labels):
             area = stats[label, cv.CC_STAT_AREA]

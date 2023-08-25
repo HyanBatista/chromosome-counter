@@ -1,7 +1,8 @@
-import cv2 as cv
 import os
-import numpy as np
 from pathlib import Path
+
+import cv2 as cv
+import numpy as np
 
 
 def get_image_paths(source: Path) -> list[Path]:
@@ -14,4 +15,4 @@ def get_image_paths(source: Path) -> list[Path]:
 
 def write_images(path_image_dicts: list[dict[np.ndarray, Path]]):
     for path_image_dict in path_image_dicts:
-        cv.imwrite(path_image_dict['path'], path_image_dict['image'])
+        cv.imwrite(path_image_dict["path"], path_image_dict["image"])

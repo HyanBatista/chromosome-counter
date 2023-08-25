@@ -1,10 +1,10 @@
-import pandas as pd
 from abc import ABC, abstractmethod
 from pathlib import Path
 
+import pandas as pd
+
 
 class BaseValidator(ABC):
-
     @abstractmethod
     def validate_count(self):
         pass

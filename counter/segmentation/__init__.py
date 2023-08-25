@@ -1,11 +1,12 @@
 import os
+from abc import ABC, abstractmethod
+from pathlib import Path
+
 import cv2 as cv
 import numpy as np
-from pathlib import Path
-from abc import ABC, abstractmethod
+from segmentation.fcm import FCM
 from tqdm import tqdm
 from utils import get_image_paths, write_images
-from segmentation.fcm import FCM
 
 
 class BaseImageSegmenter(ABC):
