@@ -17,12 +17,19 @@ pip install -r requirements.txt
 
 ## Preprocessing images
 ```
-python src/counter.py preprocess --source=./data/ori
-ginal_images --target=./data/preprocessed
+python counter/cli.py preprocess --source_dir=./data/ori
+ginal_images --target_dir=./data/preprocessed
 ```
 
 ## Apply segmentation to a set of images
+Opções de algoritmo de segmentação:
+- **Mean-Shift:** shift
+- **KMeans:** kmeans
+- **Fuzzy C-Means:** fuzzy
 
+```
+python counter/cli.py segment --source_dir=./data/original_images --target_dir=./data/segmented_images/kmeans --method=kmeans
+```
 
 # References
 - [OpenCV: Image Thresholding](https://docs.opencv.org/4.x/d7/d4d/tutorial_py_thresholding.html)

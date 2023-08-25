@@ -5,6 +5,7 @@ from pathlib import Path
 from abc import ABC, abstractmethod
 from tqdm import tqdm
 from utils import get_image_paths, write_images
+from segmentation.fcm import FCM
 
 
 class ImageSegmenter(ABC):
@@ -33,16 +34,50 @@ class ImageSegmenter(ABC):
         return get_image_paths(source_dir)
 
 
-class KMeansImageSegmenter(ImageSegmenter):    
-    def _segment_image(self, image_path: Path, k=3) -> np.ndarray:
+class KMeansImageSegmenter(ImageSegmenter):
+    def __init__(self, k=2):
+        self.k = k
+
+    def _segment_image(self, image_path: Path) -> np.ndarray:
         criteria = (cv.TERM_CRITERIA_EPS + cv.TERM_CRITERIA_MAX_ITER, 100, 0.85)
         image = cv.cvtColor(cv.imread(str(image_path)), cv.COLOR_BGR2RGB)
         reshaped = np.float32(image.reshape((-1, 3)))
         criteria = (cv.TERM_CRITERIA_EPS + cv.TERM_CRITERIA_MAX_ITER, 100, 0.85)
         _, labels, centers = cv.kmeans(
-            reshaped, k, None, criteria, 10, cv.KMEANS_RANDOM_CENTERS
+            reshaped, self.k, None, criteria, 10, cv.KMEANS_RANDOM_CENTERS
         )
         centers = np.uint8(centers)
         segmented_data = centers[labels.flatten()]
         segmented_image = segmented_data.reshape((image.shape))
         return segmented_image
+
+
+class MeanShiftSegmenter(ImageSegmenter):
+    def __init__(self, sp=30, sr=20):
+        self.sp = sp
+        self.sr = sr
+
+    def _segment_image(self, image_path: Path) -> np.ndarray:
+        image: np.ndarray = cv.imread(str(image_path))
+        shifted_image = cv.pyrMeanShiftFiltering(src=image, sp=self.sp, sr=self.sr)
+        return shifted_image
+
+
+class FuzzyCMeansSegmenter(ImageSegmenter):
+    def __init__(self, n_cluster=2, m=2, epsilon=2, max_iter=100):
+        self.n_cluster = n_cluster
+        self.m = m
+        self.epsilon = epsilon
+        self.max_iter = max_iter
+
+    def _segment_image(self, image_path: Path) -> np.ndarray:
+        image: np.ndarray = cv.imread(str(image_path), cv.IMREAD_GRAYSCALE)
+        fcm = FCM(
+            image,
+            n_clusters=self.n_cluster,
+            m=self.m,
+            epsilon=self.epsilon,
+            max_iter=self.max_iter,
+        )
+        fuzzed_image = fcm.form_clusters()
+        return fuzzed_image
