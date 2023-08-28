@@ -47,6 +47,10 @@ class ConnectedComponentsCounter(BaseCounter):
         chromosome_count = 0
         for label in range(num_labels):
             area = stats[label, cv.CC_STAT_AREA]
-            if area <= 5000 and area >= 30:
+            if area > 53000 or area < 8:
+                continue
+            if area >= 3100:
+                chromosome_count += 2
+            else:
                 chromosome_count += 1
         return chromosome_count
