@@ -2,14 +2,14 @@ from pathlib import Path
 
 import click
 import pandas as pd
-from counters import ConnectedComponentsCounter
-from preprocessing import Preprocessor
-from segmentation import (
+from counter.counters import ConnectedComponentsCounter
+from counter.preprocessing import Preprocessor
+from counter.segmentation import (
     FuzzyCMeansImageSegmenter,
     KMeansImageSegmenter,
     MeanShiftImageSegmenter,
 )
-from validation import SimpleCounterValidator
+from counter.validation import SimpleCounterValidator
 
 
 @click.group()
@@ -18,9 +18,13 @@ def cli():
 
 
 @click.command()
-@click.option("--source_dir", prompt="Souce path", help="Original images source path.")
 @click.option(
-    "--target_dir", prompt="Target path", help="Preprocessed images target path."
+    "--source_dir", prompt="Souce path", help="Original images source path."
+)
+@click.option(
+    "--target_dir",
+    prompt="Target path",
+    help="Preprocessed images target path.",
 )
 def preprocess(source_dir: Path, target_dir: Path):
     preprocessor = Preprocessor()
@@ -28,9 +32,13 @@ def preprocess(source_dir: Path, target_dir: Path):
 
 
 @click.command()
-@click.option("--source_dir", prompt="Souce path", help="Original images source path.")
 @click.option(
-    "--target_dir", prompt="Target path", help="Preprocessed images target path."
+    "--source_dir", prompt="Souce path", help="Original images source path."
+)
+@click.option(
+    "--target_dir",
+    prompt="Target path",
+    help="Preprocessed images target path.",
 )
 @click.option(
     "--method",
@@ -66,7 +74,9 @@ def count(source_dir: Path, output_file: Path):
 
 @click.command()
 @click.option(
-    "--annotations", prompt="Annotations file", help="Path for the annotations file."
+    "--annotations",
+    prompt="Annotations file",
+    help="Path for the annotations file.",
 )
 @click.option(
     "--counts",

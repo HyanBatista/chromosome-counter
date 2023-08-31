@@ -1,11 +1,10 @@
-import os
 from abc import ABC, abstractmethod
 from pathlib import Path
 
 import numpy as np
 import pandas as pd
 from sklearn.metrics import mean_squared_error
-from utils import read_json
+from counter.utils import read_json
 
 
 class BaseCounterValidator(ABC):
@@ -28,6 +27,9 @@ class BaseCounterValidator(ABC):
         annotations_df = pd.read_parquet(annotations_file_path)
         annotations_df["found"] = annotations_df["image"].apply(
             lambda image: int(count_dict[image])
+        )
+        annotations_df["count"] = annotations_df["labels"].apply(
+            lambda label: len(label)
         )
         return annotations_df
 

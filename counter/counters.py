@@ -5,7 +5,7 @@ from pathlib import Path
 
 import cv2 as cv
 from tqdm import tqdm
-from utils import get_image_paths
+from counter.utils import get_image_paths
 
 
 class BaseCounter(ABC):

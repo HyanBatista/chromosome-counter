@@ -5,7 +5,7 @@ import cv2 as cv
 import numpy as np
 from numpy import ndarray
 from tqdm import tqdm
-from utils import get_image_paths
+from counter.utils import get_image_paths
 
 
 def binarize_image(image: ndarray) -> ndarray:

@@ -17,8 +17,7 @@ pip install -r requirements.txt
 
 ## Preprocessing images
 ```
-python counter/cli.py preprocess --source_dir=./data/ori
-ginal_images --target_dir=./data/preprocessed
+python counter/cli.py preprocess --source_dir=./data/original_images --target_dir=./data/preprocessed
 ```
 
 ## Apply segmentation to a set of images
@@ -28,7 +27,7 @@ Opções de algoritmo de segmentação:
 - **Fuzzy C-Means:** fuzzy
 
 ```
-python counter/cli.py preprocess --source_dir=./data/original_images --target_dir=./data/preprocessed
+python counter/cli.py segment --source_dir=./data/original_images --target_dir=./data/segmented/kmeans --method=kmeans
 ```
 
 ## Validate results
