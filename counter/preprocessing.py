@@ -44,7 +44,7 @@ class Preprocessor:
             image = cv.imread(str(image_path), cv.IMREAD_GRAYSCALE)
             if image is None:
                 continue
-            binary_image = binarize_image(image)
+            binary_image = self._remove_circles(str(image_path), binarize_image(image))
             eroded_image = erode_image(binary_image, 2)
             processed_image_filename = os.path.basename(image_path)
             processed_image_path = os.path.join(target, processed_image_filename)
@@ -54,3 +54,18 @@ class Preprocessor:
 
     def _get_image_paths(self, source: Path) -> list[Path]:
         return get_image_paths(source)
+    
+    def _remove_circles(self, image_path: Path, binary: ndarray) -> ndarray:
+        image = cv.imread(image_path)
+        gray = cv.cvtColor(image, cv.COLOR_BGR2GRAY)
+        circles = cv.HoughCircles(
+            gray, cv.HOUGH_GRADIENT, dp=1, minDist=2000, param1=50, param2=28, minRadius=100, maxRadius=200
+        )
+
+        if circles is not None:
+            circles = np.uint16(np.around(circles))
+            for circle in circles[0, :]:
+                center = (circle[0], circle[1])
+                radius = circle[2]
+                cv.circle(binary, center, radius, (0, 0, 0), -1)
+        return binary
